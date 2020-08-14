@@ -15,10 +15,13 @@ function setup() {
 
 function draw() {
     background(0);
+    p1.py = b.by;
     p1.show();
     p2.show();
     p2.update(mouseY - 50);
-    b.update();
+    if (b.bx - b.bd <= width) {
+        b.update();
+    }
     b.show();
     if (isTouching(b, p2) || isTouching(b, p1)) {
         b.velocity *= -1;
@@ -28,7 +31,7 @@ function draw() {
 function isTouching(circle, rect) {
     if (rect == p2 && circle.bx + circle.bd / 2 >= rect.px && circle.by + circle.bd / 2 >= rect.py && circle.by - circle.bd / 2 <= rect.py + rect.ph) {
         return true;
-    } else if (rect == p1 && circle.bx - circle.bd / 2 <= rect.pw) {
+    } else if (rect == p1 && circle.bx - circle.bd / 2 <= rect.pw && circle.by + circle.bd / 2 >= rect.py && circle.by - circle.bd / 2 <= rect.py + rect.ph) {
         return true;
     }
     return false;
@@ -60,11 +63,26 @@ class Ball {
         this.bd = d;
         this.direction = random(360);
         this.velocity = 5;
-        rotate(this.direction);
+        this.rand = random(5);
+        // this.outOfScreen = false;
+        // rotate(this.direction);
     }
 
     update() {
         this.bx += this.velocity;
+        this.by += sin(this.direction) + cos(this.direction) + this.rand;
+        if (this.by <= 0 || this.by >= height) {
+            this.direction *= -1;
+            this.velocity *= -1;
+            // this.y -= 10;
+            // this.x -= 10;
+            this.rand = random(5);
+        } 
+        if (this.bx > width) {
+            this.bx = width / 2;
+            this.by = height / 2;
+            // this.outOfScreen = false;
+        }
     }
 
     show() {
